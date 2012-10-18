@@ -15,7 +15,7 @@ class Aggregator extends Command {
   protected function configure() {
     $this->setName('agg')
          ->setDescription('Aggregate runs')
-         ->addArgument('directory', InputArgument::REQUIRED, 'directory blah?');
+         ->addArgument('directory', InputArgument::REQUIRED, 'A directory with xhprof files to aggregate.');
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
@@ -27,13 +27,8 @@ class Aggregator extends Command {
     foreach ($x->getRuns() as $run) {
       $agg->addRun($run['run_id'], $run['namespace']);
     }
-    try {
-      $sum = $agg->sum();
-    }
-    catch (ErrorException $e) {
-      // TODO: Handle this properly.
-      print_r($e);
-    }
+
+    $sum = $agg->sum(TRUE);
 
     $filename = array(uniqid(), $run['namespace'] . '-summary', 'xhprof');
 
