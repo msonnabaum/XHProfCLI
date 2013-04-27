@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use XHProfCLI\Utils;
 use XHProfLib\Runs\FileRuns;
 use XHProfLib\Aggregator as XHProfLibAggregator;
 use XHProfLib\Parser\Parser;
@@ -41,8 +42,8 @@ class Aggregator extends Command {
       }
       $outliers = array();
       foreach ($totals as $namespace => $namespace_totals) {
-        $outliers[$namespace]['low'] = $this->quantile($namespace_totals['wt'], 0.25);
-        $outliers[$namespace]['high'] = $this->quantile($namespace_totals['wt'], 0.75);
+        $outliers[$namespace]['low'] = Utils::quantile($namespace_totals['wt'], 0.25);
+        $outliers[$namespace]['high'] = Utils::quantile($namespace_totals['wt'], 0.75);
         $output->writeln("Discarding outliers not in {$outliers[$namespace]['low']} - {$outliers[$namespace]['high']} for '$namespace'.");
       }
     }
@@ -65,15 +66,6 @@ class Aggregator extends Command {
     if ($ret) {
       $output->writeln("Aggregated file written successfully.");
     }
-  }
-
-  function quantile($values, $p) {
-    sort($values);
-    $H = (count($values) - 1) * $p + 1;
-    $h = floor($H);
-    $v = $values[$h - 1];
-    $e = $H - $h;
-    return $e ? $v + $e * ($values[$h] - $v) : $v;
   }
 }
 

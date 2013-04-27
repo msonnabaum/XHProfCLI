@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use XHProfCLI\Utils;
 use XHProfLib\Parser\Parser;
 use XHProfLib\Runs\FileRuns;
 
@@ -15,12 +16,6 @@ class Summary extends Command {
     $this->setName('summary')
          ->setDescription('Show summary for a run or group of runs.')
          ->addArgument('run', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'directory blah?');
-  }
-
-  protected function quartile($array, $quartile) {
-    sort($array);
-    $ninety_fifth = $array[round(($quartile/100) * count($array) - .5)];
-    return $ninety_fifth;
   }
 
   protected function getRunsFromArgs($arg) {
@@ -89,8 +84,8 @@ class Summary extends Command {
           'min' => number_format(min($values)),
           'max' => number_format(max($values)),
           'mean' => number_format(array_sum($values) / count($values)),
-          'median' => number_format($this->quantile($values, 0.5)),
-          '95th' => number_format($this->quantile($values, 0.95)),
+          'median' => number_format(Utils::quantile($values, 0.5)),
+          '95th' => number_format(Utils::quantile($values, 0.95)),
         );
       }
     }
@@ -118,15 +113,6 @@ class Summary extends Command {
       $tbl->addRow(array());
     }
     return $tbl->getTable();
-  }
-
-  function quantile($values, $p) {
-    sort($values);
-    $H = (count($values) - 1) * $p + 1;
-    $h = floor($H);
-    $v = $values[$h - 1];
-    $e = $H - $h;
-    return $e ? $v + $e * ($values[$h] - $v) : $v;
   }
 
   function metricNames() {
