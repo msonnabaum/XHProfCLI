@@ -11,6 +11,7 @@ class App extends SymfonyApplication {
 
     $this->addCommands(array(
       new Aggregator(),
+      new Summary(),
     ));
   }
 }
