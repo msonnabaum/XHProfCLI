@@ -94,8 +94,6 @@ class Summary extends Command {
   }
 
   function printTable($data) {
-    require_once 'Console/Table.php';
-
     $tbl = new \Console_Table();
     $headers = array_keys(current(current($data)));
     $tbl->setHeaders($headers);
