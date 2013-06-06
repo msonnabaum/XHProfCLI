@@ -49,10 +49,12 @@ class Aggregator extends Command {
     }
 
     foreach ($allRuns as $run) {
-      $isOutlier = $run['wt'] > $outliers[$run['namespace']]['high'] || $run['wt'] < $outliers[$run['namespace']]['low'];
-      if ($discardOutliers && $isOutlier) {
-        $output->writeln("Discarding run '{$run['run_id']}-{$run['namespace']}', because wt ({$run['wt']}) is an outlier.");
-        continue;
+      if ($discardOutliers) {
+        $isOutlier = $run['wt'] > $outliers[$run['namespace']]['high'] || $run['wt'] < $outliers[$run['namespace']]['low'];
+        if ($isOutlier) {
+          $output->writeln("Discarding run '{$run['run_id']}-{$run['namespace']}', because wt ({$run['wt']}) is an outlier.");
+          continue;
+        }
       }
       $agg->addRun($run['run_id'], $run['namespace']);
     }
